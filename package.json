@@ -5,12 +5,31 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js",
+    "client": "cd client && npm start",
+    "server": "cd server && npm start",
+    "setup-project": "npm i && cd client && npm i",
+    "dev": "nodemon server.js",
+    "watch": "node --watch server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "nodemon": "^3.1.7"
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-async-errors": "^3.1.1",
+    "express-validator": "^7.2.0",
+    "http-status-code": "^2.1.0",
+    "http-status-codes": "^2.3.0",
+    "mongodb": "^6.10.0",
+    "mongoose": "^8.7.2",
+    "morgan": "^1.10.0",
+    "nanoid": "^5.0.7",
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0"
   }
 }
