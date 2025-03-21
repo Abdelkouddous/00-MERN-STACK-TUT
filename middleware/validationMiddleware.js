@@ -9,8 +9,8 @@
 //   return [
 //     validateValues,
 //     (req, res, next) => {
-//       //dont foget about next
-//       const errors = validationResult(req);
+//       //don't forget about next
+//       const errors = validationResult(req);x
 //       if (!errors.isEmpty()) {
 //         const errorMessages = errors.array().map((err) => err.msg); //err.message is an error
 //         // return res.status(400).json({ errors: errorMessages });

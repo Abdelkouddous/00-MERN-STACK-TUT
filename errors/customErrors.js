@@ -42,3 +42,22 @@ export class ValidationError extends Error {
     this.errors = errors;
   }
 }
+
+//500 server error
+export class ServerError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ServerError";
+    this.statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
+  }
+}
+
+export class ConflictError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ConflictError";
+    this.statusCode = StatusCodes.CONFLICT;
+  }
+}
+
+// // }
