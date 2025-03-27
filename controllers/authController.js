@@ -1,7 +1,9 @@
 // Description: Handles user authentication
 import { StatusCodes } from "http-status-codes";
 import User from "../models/UserModel.js";
-import { hashPassword } from "../utils/passwordUtils.js";
+import { hashPassword, comparePassword } from "../utils/passwordUtils.js";
+import { createJWT } from "../utils/tokenUtils.js";
+import { Unauthenticated } from "../errors/customErrors.js";
 
 export const register = async (req, res, next) => {
   const isFirstAccount = (await User.countDocuments({})) === 0;
@@ -23,6 +25,7 @@ export const register = async (req, res, next) => {
       msg: "User registered successfully",
       user: {
         name: user.name,
+        userId: user._id,
         // email: user.email,
         // lastName: user.lastName,
         // location: user.location,
@@ -35,153 +38,41 @@ export const register = async (req, res, next) => {
   }
 };
 
+// /api/auth/login
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new Error("Please provide all values");
+      throw new Unauthenticated("Please provide all values");
     }
 
     const user = await User.findOne({ email }).select("+password");
+    const isPasswordCorrect = await comparePassword(
+      req.body.password,
+      user.password
+    );
+    const isValid = user && isPasswordCorrect;
     if (!user) {
-      throw new Error("Invalid credentials");
+      throw new Unauthenticated("Invalid userID");
     }
-
-    const isPasswordCorrect = await user.comparePassword(password);
     if (!isPasswordCorrect) {
-      throw new Error("Invalid credentials");
+      throw new Unauthenticated("Invalid password");
     }
+    const token = createJWT({ userId: user._id, role: user.role });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+      // signed: true,
+      // expires: new Date(Date.now() + parseInt(process.env.JWT_COOKIE_EXPIRE)),
+      // sameSite: "strict",
+    });
+    res.status(StatusCodes.OK).json({ msg: "Logged in !", user, token });
+    // user.password = undefined;
 
-    // const token = user.createJWT();
-    user.password = undefined;
-
-    res.status(StatusCodes.OK).json({ user });
     // , token });
   } catch (error) {
     next(error);
   }
 };
-
-/**
- * Authentication Controller
- * Handles user registration and authentication processes
- */
-// import { StatusCodes } from "http-status-codes";
-// import UserService from "../services/UserService.js";
-// import AuthService from "../services/AuthService.js";
-// import { BadRequestError } from "../errors/customErrors.js";
-
-// /**
-//  * Authentication Controller using Dependency Injection pattern
-//  */
-// class AuthController {
-//   constructor(userService, authService) {
-//     this.userService = userService;
-//     this.authService = authService;
-//   }
-
-//   /**
-//    * Register a new user
-//    * @param {Object} req - Express request object
-//    * @param {Object} res - Express response object
-//    * @param {Function} next - Express next middleware function
-//    */
-//   register = async (req, res, next) => {
-//     try {
-//       // Validate request data
-//       this.validateRegistrationData(req.body);
-
-//       // Determine user role based on system state
-//       const role = await this.userService.determineUserRole();
-
-//       // Create user with appropriate role
-//       const userData = { ...req.body, role };
-//       const user = await this.userService.createUser(userData);
-
-//       // Generate authentication token
-//       const token = this.authService.generateToken(user);
-
-//       // Return sanitized user data and token
-//       res.status(StatusCodes.CREATED).json({
-//         user: this.userService.sanitizeUser(user),
-//         token,
-//       });
-//     } catch (error) {
-//       next(error);
-//     }
-//   };
-
-//   /**
-//    * Validate user registration data
-//    * @param {Object} userData - User registration data
-//    * @throws {BadRequestError} If validation fails
-//    */
-//   validateRegistrationData(userData) {
-//     const { name, email, password } = userData;
-
-//     if (!name || !email || !password) {
-//       throw new BadRequestError("Please provide all required fields");
-//     }
-
-//     // Additional validation could be added here
-//   }
-// }
-
-// // Service implementations
-// class UserServiceImpl {
-//   /**
-//    * Determine the role for a new user based on system state
-//    * @returns {Promise<string>} The appropriate role
-//    */
-//   async determineUserRole() {
-//     const isFirstAccount = (await User.countDocuments({})) === 0;
-//     return isFirstAccount ? "admin" : "user";
-//   }
-
-//   /**
-//    * Create a new user in the database
-//    * @param {Object} userData - User data to create
-//    * @returns {Promise<Object>} Created user object
-//    */
-//   async createUser(userData) {
-//     return await User.create(userData);
-//   }
-
-//   /**
-//    * Remove sensitive information from user object
-//    * @param {Object} user - User object to sanitize
-//    * @returns {Object} Sanitized user object
-//    */
-//   sanitizeUser(user) {
-//     return {
-//       name: user.name,
-//       email: user.email,
-//       lastName: user.lastName,
-//       location: user.location,
-//       role: user.role,
-//     };
-//   }
-// }
-
-// class AuthServiceImpl {
-//   /**
-//    * Generate authentication token for user
-//    * @param {Object} user - User object
-//    * @returns {string} JWT token
-//    */
-//   generateToken(user) {
-//     return user.createJWT();
-//   }
-// }
-
-// // Create service instances
-// const userService = new UserServiceImpl();
-// const authService = new AuthServiceImpl();
-
-// // Create and export controller instance
-// const authController = new AuthController(userService, authService);
-// export const { register } = authController;
-
-// // For testing and dependency injection
-// export { AuthController, UserServiceImpl, AuthServiceImpl };

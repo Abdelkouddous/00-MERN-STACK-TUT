@@ -13,15 +13,15 @@ export const comparePassword = async (password, hashedPassword) => {
   return isMatch;
 };
 //generate JWT token
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 
-export const generateToken = async (user) => {
-  const payload = {
-    id: user._id,
-    role: user.role,
-  };
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
-  });
-  return token;
-};
+// export const generateToken = async (user) => {
+//   const payload = {
+//     id: user._id,
+//     role: user.role,
+//   };
+//   const token = jwt.sign(payload, process.env.JWT_SECRET, {
+//     expiresIn: process.env.JWT_EXPIRE,
+//   });
+//   return token;
+// };

@@ -3,8 +3,9 @@ import { StatusCodes } from "http-status-codes";
 import { NotFoundError } from "../errors/customErrors.js";
 // Get all jobs controller
 export const getAllJobs = async (req, res) => {
+  console.log(req.user);
   try {
-    const jobs = await Job.find(); // Fetch all jobs from the database
+    const jobs = await Job.find({ createdBy: req.user.userId }); // Fetch all jobs from the database
     res.status(StatusCodes.OK).json({ jobs });
   } catch (error) {
     console.error(error);
@@ -24,15 +25,17 @@ export const getJobById = async (req, res) => {
 
 // Create a new job
 export const createJob = async (req, res) => {
+  req.body.createdBy = req.user.userId;
   try {
-    const { company, position, jobStatus, jobType, jobLocation } = req.body;
-    const job = await Job.create({
-      company,
-      position,
-      jobStatus,
-      jobType,
-      jobLocation,
-    });
+    const job = await Job.create(req.body); // Create a new job in the database
+    // const { company, position, jobStatus, jobType, jobLocation } = req.body;
+    // const job = await Job.create({
+    //   company,
+    //   position,
+    //   jobStatus,
+    //   jobType,
+    //   jobLocation,
+    // });
     res.status(StatusCodes.CREATED).json({ job });
   } catch (error) {
     console.error(error);

@@ -4,17 +4,38 @@ import { Link, useRouteError } from "react-router-dom";
 const Error = () => {
   const error = useRouteError();
   console.log(error);
+
   return (
-    <div className="m-auto flex flex-col items-center">
-      <h1 className="">Error</h1>
-      <p>Something went wrong, please try again later.</p>
-      <Link to="/">
-        <button className="text-center justify-center">
-          <span className="inline-flex items-center rounded-md hover:bg-blue-950 hover:text-blue-50 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-800 ring-1 ring-inset ring-gray-500/10">
-            Go to Dashboard
-          </span>
-        </button>
-      </Link>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="form text-center max-w-md w-full">
+        <h1 className="mb-4" style={{ color: "var(--primary-500)" }}>
+          {error?.status || "Error"}
+        </h1>
+        <h2 className="mb-6">{error?.statusText || "Something went wrong"}</h2>
+        <p className="mb-8" style={{ color: "var(--text-secondary-color)" }}>
+          {error?.message ||
+            "We apologize for the inconvenience. Please try again later."}
+        </p>
+
+        {/* Show stack trace only in development */}
+        {error?.stack && process.env.NODE_ENV === "development" && (
+          <pre
+            className="mt-6 text-left p-4 rounded-md overflow-auto text-sm"
+            style={{
+              background: "var(--background-color)",
+              color: "var(--text-secondary-color)",
+            }}
+          >
+            {error.stack}
+          </pre>
+        )}
+
+        <div className="mt-8">
+          <Link to="/dashboard">
+            <button className="btn">Return to Dashboard</button>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

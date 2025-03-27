@@ -1,67 +1,75 @@
+// Login.jsx
 import React from "react";
 import { Link } from "react-router-dom";
 import Wrapper from "../assets/wrappers/RegisterAndLoginPage";
 import Logo from "./components/Logo";
-
 import FormRow from "./components/FormRow";
 
 const Login = () => {
-  //   return (
-  //     <div>
-  //       <h1>Login</h1>
-  // <p>Don't have an account ? </p>
-  // <Link to="/register">
-  //   {" "}
-  //   <button className="text-center justify-center ">
-  //     <span className="inline-flex items-center rounded-md hover:bg-blue-950 hover:text-blue-50 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-  //       Register
-  //     </span>
-  //   </button>
-  // </Link>
-  //     </div>
-  //   );
-  // };
   return (
     <Wrapper>
-      <form className="form">
-        <div className="h-5 w-[30%]">
-          <Logo></Logo>
+      <form className="form max-w-md w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center mb-8">
+          <div className="h-12 w-auto sm:h-16">
+            <Logo />
+          </div>
         </div>
-        <h1 className="my-2 text-center "> Login</h1>
 
-        <FormRow
-          type="email"
-          name="email"
-          defaultValue={""}
-          placeholder={"your.email@gmail.com"}
-        ></FormRow>
+        <h1 className="text-3xl font-bold text-center mb-8">
+          Login to Your Account
+        </h1>
 
-        <FormRow
-          type="password"
-          name="password"
-          defaultValue={"secret123"}
-          placeholder={"Enter your password"}
-        ></FormRow>
-        <button type="submit" className="btn btn-block">
-          Login
-        </button>
+        <div className="space-y-6">
+          <FormRow
+            type="email"
+            name="email"
+            defaultValue=""
+            placeholder="your.email@gmail.com"
+            labelText="Email Address"
+            required
+          />
 
-        <div className="flex flex-col items-center justify-center ">
-          <p>A visitor ? </p>{" "}
-          <button type="button" className="btn btn-block">
-            Explore the app
+          <FormRow
+            type="password"
+            name="password"
+            defaultValue=""
+            placeholder="Enter your password"
+            labelText="Password"
+            required
+          />
+
+          <button
+            type="submit"
+            className="btn btn-block transition-all duration-300 hover:opacity-90"
+          >
+            Sign In
           </button>
-        </div>
-        <div className="flex flex-col items-center justify-center ">
-          <p>Don't have an account ? </p>
-          <Link to="/register">
-            {" "}
-            <button className="text-center justify-center ">
-              <span className="inline-flex items-center rounded-md hover:bg-blue-950 hover:text-blue-50 bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-                Register
-              </span>
-            </button>
-          </Link>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-white text-gray-500">or</span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-block bg-gray-100 text-gray-700 hover:bg-gray-700 transition-all duration-300"
+          >
+            Explore as Guest
+          </button>
+
+          <div className="text-center mt-8">
+            <p className="text-sm text-gray-600 mb-2">Don't have an account?</p>
+            <Link
+              to="/register"
+              className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-primary-500 bg-white border border-primary-500 rounded-md hover:bg-primary-500 hover:scale-x-105 transition-all duration-300"
+            >
+              Create Account
+            </Link>
+          </div>
         </div>
       </form>
     </Wrapper>

@@ -7,5 +7,11 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   res.status(statusCode).json({ msg });
 };
 
+const notFound = (req, res, next) => {
+  const error = new Error(`Not found - ${req.originalUrl}`);
+  res.status(StatusCodes.NOT_FOUND);
+  next(error);
+};
+
 export default errorHandlerMiddleware;
 // This middleware is executed after all other middleware functions
