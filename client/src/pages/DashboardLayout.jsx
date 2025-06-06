@@ -1,66 +1,7 @@
-// import React, { createContext, useContext, useState } from "react";
-// import { Outlet } from "react-router";
-// import Wrapper from "../assets/wrappers/Dashboard";
-// import { BigSideBar, Navbar, SmallSideBar } from ".";
-// import { checkDefaultTheme } from "../App";
-// const DashboardContext = createContext();
-
-// const DashboardLayout = () => {
-//   //template
-//   const user = { name: "aymen" };
-//   const [showSidebar, setShowSidebar] = useState(false);
-//   const [isDarkTheme, setIsDarkTheme] = useState(checkDefaultTheme);
-
-//   const toggleDarkTheme = () => {
-//     const newDarkTheme = !isDarkTheme;
-//     setIsDarkTheme(newDarkTheme);
-//     console.log("Toggle dark theme + ", newDarkTheme);
-//     document.body.classList.toggle("dark-theme", newDarkTheme);
-//     //save the value so it doesnt reset when refreshing
-//     localStorage.setItem("darkTheme", newDarkTheme);
-//   };
-//   const toggleSidebar = () => {
-//     console.log("Toggle sidebar" + showSidebar);
-//     setShowSidebar(!showSidebar);
-//   };
-
-//   const logoutUser = async () => {
-//     //logout logic
-//     console.log("logout");
-//     //set user to null
-//   };
-
-//   return (
-//     <DashboardContext.Provider
-//       value={{
-//         user,
-//         showSidebar,
-//         isDarkTheme,
-//         toggleDarkTheme,
-//         toggleSidebar,
-//         logoutUser,
-//       }}
-//     >
-//       <Wrapper>
-//         <main className="dashboard">
-//           <SmallSideBar></SmallSideBar>
-//           <BigSideBar></BigSideBar>
-//           <div>
-//             {/* <Navbar></Navbar> */}
-//             <div className="dashboard-page">
-//               <Outlet></Outlet>
-//             </div>
-//           </div>
-//         </main>
-//       </Wrapper>
-//     </DashboardContext.Provider>
-//   );
-// };
-
 // export const useDashboardContext = () => useContext(DashboardContext);
 // export default DashboardLayout;
 import React, { createContext, useContext, useState } from "react";
-import { Outlet } from "react-router";
+import { Outlet, redirect } from "react-router";
 import Wrapper from "../assets/wrappers/Dashboard";
 import { BigSideBar, SmallSideBar } from ".";
 import { checkDefaultTheme } from "../App";
@@ -72,14 +13,29 @@ import {
   FaMoon,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 const DashboardContext = createContext();
 
 // Navbar component specifically for the dashboard
 const DashboardNavbar = () => {
+  const navigate = useNavigate();
   const { user, toggleSidebar, toggleDarkTheme, isDarkTheme, logoutUser } =
     useDashboardContext();
   const [showLogout, setShowLogout] = useState(false);
+  // Redirect to login if user is not authenticated
+  if (!user) {
+    toast.error("You must be logged in to access the dashboard");
+    return redirect("/login");
+  }
+  //...
+  // Handle logout
+  const handleLogout = () => {
+    logoutUser();
+    navigate("/");
+    toast.success("Logged out successfully");
+  };
+  //...
 
   return (
     <nav className="bg-primary-500 sticky">
@@ -129,7 +85,9 @@ const DashboardNavbar = () => {
               <div className="absolute right-0 top-full mt-2  shadow-lg rounded-md border hover:scale-x-105  w-32 z-10">
                 <button
                   className="w-full text-center px-4 py-2 text-sm  items-center transition-colors"
-                  onClick={logoutUser}
+                  onClick={() => {
+                    handleLogout();
+                  }}
                 >
                   Logout
                 </button>

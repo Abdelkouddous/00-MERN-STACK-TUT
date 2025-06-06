@@ -76,3 +76,12 @@ export const login = async (req, res, next) => {
     next(error);
   }
 };
+
+// logout
+export const logout = (req, res, next) => {
+  res.cookie("token", "logout", {
+    httpOnly: true,
+    expires: new Date(Date.now()),
+  });
+  res.status(StatusCodes.OK).json({ msg: "Successfully logged out !" });
+};

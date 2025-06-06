@@ -31,8 +31,8 @@ const Error = () => {
         )}
 
         <div className="mt-8">
-          <Link to="/dashboard">
-            <button className="btn">Return to Dashboard</button>
+          <Link to="/">
+            <button className="btn">Return to Home</button>
           </Link>
         </div>
       </div>

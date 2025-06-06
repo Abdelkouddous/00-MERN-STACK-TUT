@@ -3,11 +3,16 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import morgan from "morgan";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
+
 //routes imports
+
 import jobRouter from "./routes/jobRouter.js";
 import authRouter from "./routes/authRouter.js";
+import userRouter from "./routes/userRouter.js";
+
 //middlewares imports
+
 import errorHandlerMiddleware from "./middleware/errorHandlerMiddleware.js";
 import { authenticateUser } from "./middleware/authMiddleware.js";
 import cookieParser from "cookie-parser";
@@ -26,16 +31,23 @@ app.use(express.json());
 // Routes
 app.use("/api/v1/jobs", authenticateUser, jobRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/users", authenticateUser, userRouter);
 app.get("/", (req, res) => res.send("Hello, world"));
-
+app.get("/api/v1/test", (req, res) => {
+  res.json("Test route is working!");
+});
+//
 // Connect to MongoDB with retry logic
 const connectDB = async () => {
-  const MAX_RETRIES = 5;
+  const MAX_RETRIES = 10;
   let retries = 0;
 
   while (retries < MAX_RETRIES) {
     try {
+      console.log("Connecting to MongoDB with URL:", process.env.MONGO_URL); // Log connection string
       await mongoose.connect(process.env.MONGO_URL, {
+        useNewUrlParser: true, // Added option
+        useUnifiedTopology: true, // Added option
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
         connectTimeoutMS: 10000,
@@ -61,6 +73,8 @@ const connectDB = async () => {
   }
 };
 
+//connect
+
 // Start server
 const start = async () => {
   try {
@@ -79,7 +93,6 @@ const start = async () => {
 };
 
 start();
-
 // Error handling middleware
 app.use("*", (req, res) => {
   res.status(404).json({

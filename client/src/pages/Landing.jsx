@@ -7,7 +7,6 @@ import Navbar from "../navbar/Navbar";
 const Landing = () => {
   return (
     <>
-      <Navbar></Navbar>
       <div className="min-h-screen bg-[var(--background-color)]">
         {/* Hero Section */}
 

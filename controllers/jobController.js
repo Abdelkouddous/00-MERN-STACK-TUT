@@ -1,6 +1,6 @@
-import Job from "../models/JobModel.js"; // Ensure this path is correct
 import { StatusCodes } from "http-status-codes";
 import { NotFoundError } from "../errors/customErrors.js";
+import Job from "../models/JobModel.js"; // Ensure this path is correct
 // Get all jobs controller
 export const getAllJobs = async (req, res) => {
   console.log(req.user);

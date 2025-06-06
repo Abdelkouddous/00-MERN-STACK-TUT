@@ -1,7 +1,5 @@
 import { Router } from "express";
 
-const router = Router();
-
 import {
   getAllJobs,
   createJob,
@@ -13,6 +11,8 @@ import {
   validateJobInput,
   validateIdParam,
 } from "../middleware/validationMiddleware.js";
+
+const router = Router();
 
 router.route("/").get(getAllJobs).post(validateJobInput, createJob);
 router
